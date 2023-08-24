@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Romanized Thai Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .square {
+            width: 300px;
+            height: 300px;
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #restartButton {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="square">
+        <p>Type your number from 1 to 1,000,000</p>
+        <input type="text" id="numberInput">
+        <button onclick="provideExplanation()">Action</button>
+        <p id="explanation"></p>
+        <button id="restartButton" onclick="restart()">Restart</button>
+    </div>
+
+    <script>
+        function provideExplanation() {
+            const inputNumber = document.getElementById("numberInput").value;
+            const explanationElement = document.getElementById("explanation");
+            const restartButton = document.getElementById("restartButton");
+
+            if (inputNumber == "") {
+                explanationElement.textContent = "Prôd pôn tua lek";
+                return;
+            }
+
+            const num = parseInt(inputNumber);
+
+            if (isNaN(num) || inputNumber.indexOf('.') !== -1 || num < 1 || num > 1000000) {
+                explanationElement.textContent = "Please enter a valid integer between 1 and 1,000,000.";
+                return;
+            }
+
+            explanationElement.textContent = getRomanizedThai(num);
+            restartButton.style.display = "block";
+        }
+
+        function restart() {
+            const inputNumber = document.getElementById("numberInput");
+            const explanationElement = document.getElementById("explanation");
+            const restartButton = document.getElementById("restartButton");
+
+            inputNumber.value = "";
+            explanationElement.textContent = "";
+            restartButton.style.display = "none";
+        }
+
+        function getRomanizedThai(num) {
+            const baseNumbers = {
+                1: "nùng",
+                2: "sǒng",
+                3: "sǎam",
+                4: "sìi",
+                5: "hâa",
+                6: "hòk",
+                7: "jet",
+                8: "bpàet",
+                9: "gâo"
+            };
+
+            let parts = [];
+
+            if (num >= 100000) {
+                let hundredThousandsPlace = Math.floor(num / 100000);
+                parts.push(baseNumbers[hundredThousandsPlace] + " sàen");
+                num %= 100000;
+            }
+
+            if (num >= 10000) {
+                let tenThousandsPlace = Math.floor(num / 10000);
+                parts.push((num >= 20000 ? baseNumbers[tenThousandsPlace] : '') + " sìp phan");
+                num %= 10000;
+            }
+
+            if (num >= 1000) {
+                let thousandsPlace = Math.floor(num / 1000);
+                parts.push(baseNumbers[thousandsPlace] + " phan");
+                num %= 1000;
+            }
+
+            if (num >= 100) {
+                let hundredsPlace = Math.floor(num / 100);
+                parts.push(baseNumbers[hundredsPlace] + " rói");
+                num %= 100;
+            }
+
+            if (num >= 10) {
+                let tensPlace = Math.floor(num / 10);
+                parts.push((num >= 20 ? baseNumbers[tensPlace] : '') + " sìp");
+                num %= 10;
+            }
+
+            if (num > 0) {
+                parts.push(baseNumbers[num]);
+            }
+
+            return parts.join(" + ");
+        }
+    </script>
+</body>
+
+</html>
